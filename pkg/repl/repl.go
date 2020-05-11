@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/musale/monkey/src/lexer"
-	"github.com/musale/monkey/src/token"
+	"github.com/musale/monkey/pkg/lexer"
+	"github.com/musale/monkey/pkg/token"
 )
 
 // PROMPT will appear at the start of a statement in the REPL

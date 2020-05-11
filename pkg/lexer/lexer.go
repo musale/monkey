@@ -1,6 +1,6 @@
 package lexer
 
-import "github.com/musale/monkey/src/token"
+import "github.com/musale/monkey/pkg/token"
 
 // Lexer - is a character input structure that can read characters ahead of it
 type Lexer struct {

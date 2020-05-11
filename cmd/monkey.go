@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/musale/monkey/src/repl"
+	"github.com/musale/monkey/pkg/repl"
 )
 
 func main() {

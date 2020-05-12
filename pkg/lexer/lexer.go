@@ -113,8 +113,8 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
-// New returns a new Lexer
-func New(input string) *Lexer {
+// NewLexer returns a new Lexer
+func NewLexer(input string) *Lexer {
 	l := &Lexer{input: input}
 	l.readChar()
 	return l

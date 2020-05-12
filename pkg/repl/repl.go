@@ -26,7 +26,7 @@ func Start(in io.Reader, out io.Writer) {
 			fmt.Fprintf(out, "Exiting the REPL...")
 			return
 		}
-		l := lexer.New(line)
+		l := lexer.NewLexer(line)
 
 		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
 			fmt.Fprintf(out, "%+v\n", tok)

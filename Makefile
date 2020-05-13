@@ -1,4 +1,6 @@
-.PHONY: coverprofile run tests
+.PHONY: coverprofile run tests fmt
+fmt:
+	@go fmt ./...
 run:
 	@go run cmd/*
 

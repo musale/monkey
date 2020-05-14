@@ -10,15 +10,58 @@ import (
 )
 
 const (
-	_           int = iota
-	LOWEST          // LOWEST precedence
-	EQUALS          // ==
-	LESSGREATER     // > or <
-	SUM             // +
-	PRODUCT         // *
-	PREFIX          // -X or !X
-	CALL            // myFunction(X)
+	_ int = iota
+	// LOWEST precedence value of 1
+	LOWEST
+	// EQUALS precedence value of 2
+	EQUALS // ==
+	// LESSGREATER precedence value of 3
+	LESSGREATER // > or <
+	// SUM precedence value of 4
+	SUM // +
+	// PRODUCT precedence value of 5
+	PRODUCT // *
+	// PREFIX precedence value of 6
+	PREFIX // -X or !X
+	// CALL precedence value of 7
+	CALL // myFunction(X)
 )
+
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
+var precedences = map[token.TokenType]int{
+	token.EQ:       EQUALS,
+	token.NOT_EQ:   EQUALS,
+	token.LT:       LESSGREATER,
+	token.GT:       LESSGREATER,
+	token.PLUS:     SUM,
+	token.MINUS:    SUM,
+	token.SLASH:    PRODUCT,
+	token.ASTERISK: PRODUCT,
+}
+
+// peekPrecedence checks if the precedence of the
+// peekToken is the LOWEST
+func (p *Parser) peekPrecedence() int {
+	if precedence, ok := precedences[p.peekToken.Type]; ok {
+		return precedence
+	}
+
+	return LOWEST
+}
+
+// currPrecedence give the precedence value of the
+// current token if it exists or LOWEST
+func (p *Parser) currPrecedence() int {
+	if p, ok := precedences[p.currToken.Type]; ok {
+		return p
+	}
+
+	return LOWEST
+}
 
 // Parser defines a parser
 type Parser struct {
@@ -164,6 +207,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	}
 	leftExp := prefix()
 
+	// build the expression
 	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
 		infix := p.infixParseFns[p.peekToken.Type]
 		if infix == nil {
@@ -241,36 +285,4 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	}
 
 	return stmt
-}
-
-type (
-	prefixParseFn func() ast.Expression
-	infixParseFn  func(ast.Expression) ast.Expression
-)
-
-var precedences = map[token.TokenType]int{
-	token.EQ:       EQUALS,
-	token.NOT_EQ:   EQUALS,
-	token.LT:       LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.PLUS:     SUM,
-	token.MINUS:    SUM,
-	token.SLASH:    PRODUCT,
-	token.ASTERISK: PRODUCT,
-}
-
-func (p *Parser) peekPrecedence() int {
-	if p, ok := precedences[p.peekToken.Type]; ok {
-		return p
-	}
-
-	return LOWEST
-}
-
-func (p *Parser) currPrecedence() int {
-	if p, ok := precedences[p.currToken.Type]; ok {
-		return p
-	}
-
-	return LOWEST
 }

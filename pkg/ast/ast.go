@@ -195,3 +195,15 @@ func (ie *InfixExpression) String() string {
 
 	return out.String()
 }
+
+// Boolean defines a true/false
+type Boolean struct {
+	Token token.Token
+	Value bool
+}
+
+func (b *Boolean) expressionNode() {}
+
+// TokenLiteral for a true/false
+func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
+func (b *Boolean) String() string       { return b.Token.Literal }

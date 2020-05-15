@@ -6,15 +6,30 @@ import (
 	"io"
 
 	"github.com/musale/monkey/pkg/lexer"
-	"github.com/musale/monkey/pkg/token"
+	"github.com/musale/monkey/pkg/parser"
 )
 
 // PROMPT will appear at the start of a statement in the REPL
 const PROMPT = ">> "
 
+// monkeyFace is the guy
+const monkeyFace = `            __,__
+   .--.  .-"     "-.  .--.
+  / .. \/  .-. .-.  \/ .. \
+ | |  '|  /   Y   \  |'  | |
+ | \   \  \ 0 | 0 /  /   / |
+  \ '- ,\.-"""""""-./, -' /
+   ''-' /_   ^ ^   _\ '-''
+       |  \._   _./  |
+       \   \ '~' /   /
+        '._ '-=-' _.'
+           '-----'
+`
+
 // Start will fire up a repl
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	fmt.Fprintf(out, monkeyFace)
 	for {
 		fmt.Fprintf(out, PROMPT)
 		scanned := scanner.Scan()
@@ -27,9 +42,21 @@ func Start(in io.Reader, out io.Writer) {
 			return
 		}
 		l := lexer.NewLexer(line)
+		p := parser.NewParser(l)
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Fprintf(out, "%+v\n", tok)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
 		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
+	}
+}
+
+func printParserErrors(out io.Writer, errors []string) {
+	for _, err := range errors {
+		io.WriteString(out, fmt.Sprintf("\t%s\n", err))
 	}
 }

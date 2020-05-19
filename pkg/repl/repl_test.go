@@ -35,10 +35,10 @@ func TestStart(t *testing.T) {
 		compareInts(t, out.counter, calls)
 	})
 
-	t.Run("Count exactly 5 calls for PROMPT, monkeyFace and statement", func(t *testing.T) {
+	t.Run("Count exactly 3 calls for PROMPT, monkeyFace and statement", func(t *testing.T) {
 		input := strings.NewReader("let x = 5;")
 		out := &writerSpy{}
-		calls := 5
+		calls := 3
 		Start(input, out)
 		compareInts(t, out.counter, calls)
 	})

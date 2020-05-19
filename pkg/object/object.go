@@ -9,6 +9,8 @@ const (
 	BooleanObj = "BOOLEAN"
 	// NullObj name
 	NullObj = "NULL"
+	// ReturnValueObj name
+	ReturnValueObj = "RETURN_VALUE"
 )
 
 // Type represents every value during AST evaluation
@@ -50,3 +52,14 @@ func (b *Null) Inspect() string { return "<null>" }
 
 // Type returns the Null object name
 func (b *Null) Type() Type { return NullObj }
+
+// ReturnValue data type
+type ReturnValue struct {
+	Value Object
+}
+
+// Inspect returns the Return value string format
+func (rv *ReturnValue) Inspect() string { return rv.Value.Inspect() }
+
+// Type returns the Return object name
+func (rv *ReturnValue) Type() Type { return ReturnValueObj }

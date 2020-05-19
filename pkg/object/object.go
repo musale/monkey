@@ -1,6 +1,12 @@
 package object
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+	"strings"
+
+	"github.com/musale/monkey/pkg/ast"
+)
 
 const (
 	// IntegerObj name
@@ -13,6 +19,8 @@ const (
 	ReturnValueObj = "RETURN_VALUE"
 	// ErrorObj name
 	ErrorObj = "ERROR"
+	// FunctionObj name
+	FunctionObj = "FUNCTION"
 )
 
 // Type represents every value during AST evaluation
@@ -84,3 +92,31 @@ func (e *Error) Inspect() string {
 
 // Type returns the Return object name
 func (e *Error) Type() Type { return ErrorObj }
+
+// Function data type
+type Function struct {
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Environment
+}
+
+// Inspect returns the Return value string format
+func (f *Function) Inspect() string {
+	var out bytes.Buffer
+
+	params := []string{}
+	for _, p := range f.Parameters {
+		params = append(params, p.String())
+	}
+	out.WriteString("fn")
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") {\n\t")
+	out.WriteString(f.Body.String())
+	out.WriteString("\n\t}")
+
+	return out.String()
+}
+
+// Type returns the Return object name
+func (f *Function) Type() Type { return FunctionObj }

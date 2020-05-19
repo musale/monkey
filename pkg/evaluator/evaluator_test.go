@@ -3,7 +3,6 @@ package evaluator
 import (
 	"testing"
 
-	"github.com/musale/monkey/pkg/environment"
 	"github.com/musale/monkey/pkg/lexer"
 	"github.com/musale/monkey/pkg/object"
 	"github.com/musale/monkey/pkg/parser"
@@ -41,7 +40,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 			10,
 		},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 	for _, tt := range tests {
 		evaluated := testEval(tt.input, env)
 		testIntegerObject(t, evaluated, tt.expected)
@@ -88,7 +87,7 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"(1 > 2) == true", false},
 		{"(1 > 2) == false", true},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input, env)
@@ -122,7 +121,7 @@ func TestBangOperator(t *testing.T) {
 		{"!!false", false},
 		{"!!5", true},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 	for _, tt := range tests {
 		evaluated := testEval(tt.input, env)
 		testBooleanObject(t, evaluated, tt.expected)
@@ -142,7 +141,7 @@ func TestIfElseExpressions(t *testing.T) {
 		{"if (1 > 2) { 10 } else { 20 }", 20},
 		{"if (1 < 2) { 10 } else { 20 }", 10},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 	for _, tt := range tests {
 		evaluated := testEval(tt.input, env)
 		integer, ok := tt.expected.(int)
@@ -172,7 +171,7 @@ func TestReturnStatements(t *testing.T) {
 		{"return 2 * 5; 9;", 10},
 		{"9; return 2 * 5; 9;", 10},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 	for _, tt := range tests {
 		evaluated := testEval(tt.input, env)
 		testIntegerObject(t, evaluated, tt.expected)
@@ -224,7 +223,7 @@ func TestErrorHandling(t *testing.T) {
 			"identifier not found: foobar",
 		},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input, env)
@@ -253,16 +252,62 @@ func TestLetStatements(t *testing.T) {
 		{"let a = 5; let b = a; b;", 5},
 		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
 	}
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input, env), tt.expected)
 	}
 }
 
-func testEval(input string, env *environment.Environment) object.Object {
+func testEval(input string, env *object.Environment) object.Object {
 	l := lexer.NewLexer(input)
 	p := parser.NewParser(l)
 	program := p.ParseProgram()
 
 	return Eval(program, env)
+}
+
+func TestFunctionObject(t *testing.T) {
+	input := "fn(x) { x + 2; };"
+	env := object.NewEnvironment()
+
+	evaluated := testEval(input, env)
+
+	fn, ok := evaluated.(*object.Function)
+	if !ok {
+		t.Fatalf("object is not Function. got=%T (%+v)", evaluated, evaluated)
+	}
+
+	if len(fn.Parameters) != 1 {
+		t.Fatalf("function has wrong parameters. Parameters=%+v",
+			fn.Parameters)
+	}
+
+	if fn.Parameters[0].String() != "x" {
+		t.Fatalf("parameter is not 'x'. got=%q", fn.Parameters[0])
+	}
+
+	expectedBody := "(x + 2)"
+
+	if fn.Body.String() != expectedBody {
+		t.Fatalf("body is not %q. got=%q", expectedBody, fn.Body.String())
+	}
+}
+
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let identity = fn(x) { x; }; identity(5);", 5},
+		{"let identity = fn(x) { return x; }; identity(5);", 5},
+		{"let double = fn(x) { x * 2; }; double(5);", 10},
+		{"let add = fn(x, y) { x + y; }; add(5, 5);", 10},
+		{"let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"fn(x) { x; }(5)", 5},
+	}
+	env := object.NewEnvironment()
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input, env), tt.expected)
+	}
 }

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/musale/monkey/pkg/environment"
 	"github.com/musale/monkey/pkg/evaluator"
 	"github.com/musale/monkey/pkg/lexer"
+	"github.com/musale/monkey/pkg/object"
 	"github.com/musale/monkey/pkg/parser"
 )
 
@@ -31,7 +31,7 @@ const monkeyFace = `            __,__
 // Start will fire up a repl
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	env := environment.NewEnvironment()
+	env := object.NewEnvironment()
 
 	fmt.Fprintf(out, monkeyFace)
 	for {

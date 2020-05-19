@@ -3,6 +3,7 @@ package evaluator
 import (
 	"testing"
 
+	"github.com/musale/monkey/pkg/environment"
 	"github.com/musale/monkey/pkg/lexer"
 	"github.com/musale/monkey/pkg/object"
 	"github.com/musale/monkey/pkg/parser"
@@ -40,19 +41,11 @@ func TestEvalIntegerExpression(t *testing.T) {
 			10,
 		},
 	}
-
+	env := environment.NewEnvironment()
 	for _, tt := range tests {
-		evaluated := testEval(tt.input)
+		evaluated := testEval(tt.input, env)
 		testIntegerObject(t, evaluated, tt.expected)
 	}
-}
-
-func testEval(input string) object.Object {
-	l := lexer.NewLexer(input)
-	p := parser.NewParser(l)
-	program := p.ParseProgram()
-
-	return Eval(program)
 }
 
 func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
@@ -95,9 +88,10 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"(1 > 2) == true", false},
 		{"(1 > 2) == false", true},
 	}
+	env := environment.NewEnvironment()
 
 	for _, tt := range tests {
-		evaluated := testEval(tt.input)
+		evaluated := testEval(tt.input, env)
 		testBooleanObject(t, evaluated, tt.expected)
 	}
 }
@@ -128,9 +122,9 @@ func TestBangOperator(t *testing.T) {
 		{"!!false", false},
 		{"!!5", true},
 	}
-
+	env := environment.NewEnvironment()
 	for _, tt := range tests {
-		evaluated := testEval(tt.input)
+		evaluated := testEval(tt.input, env)
 		testBooleanObject(t, evaluated, tt.expected)
 	}
 }
@@ -148,9 +142,9 @@ func TestIfElseExpressions(t *testing.T) {
 		{"if (1 > 2) { 10 } else { 20 }", 20},
 		{"if (1 < 2) { 10 } else { 20 }", 10},
 	}
-
+	env := environment.NewEnvironment()
 	for _, tt := range tests {
-		evaluated := testEval(tt.input)
+		evaluated := testEval(tt.input, env)
 		integer, ok := tt.expected.(int)
 		if ok {
 			testIntegerObject(t, evaluated, int64(integer))
@@ -178,9 +172,9 @@ func TestReturnStatements(t *testing.T) {
 		{"return 2 * 5; 9;", 10},
 		{"9; return 2 * 5; 9;", 10},
 	}
-
+	env := environment.NewEnvironment()
 	for _, tt := range tests {
-		evaluated := testEval(tt.input)
+		evaluated := testEval(tt.input, env)
 		testIntegerObject(t, evaluated, tt.expected)
 	}
 }
@@ -225,9 +219,15 @@ func TestErrorHandling(t *testing.T) {
 			`,
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
+		{
+			"foobar",
+			"identifier not found: foobar",
+		},
 	}
+	env := environment.NewEnvironment()
+
 	for _, tt := range tests {
-		evaluated := testEval(tt.input)
+		evaluated := testEval(tt.input, env)
 
 		errObj, ok := evaluated.(*object.Error)
 		if !ok {
@@ -241,4 +241,28 @@ func TestErrorHandling(t *testing.T) {
 				tt.expectedMessage, errObj.Message)
 		}
 	}
+}
+
+func TestLetStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let a = 5; a;", 5},
+		{"let a = 5 * 5; a;", 25},
+		{"let a = 5; let b = a; b;", 5},
+		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
+	}
+	env := environment.NewEnvironment()
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input, env), tt.expected)
+	}
+}
+
+func testEval(input string, env *environment.Environment) object.Object {
+	l := lexer.NewLexer(input)
+	p := parser.NewParser(l)
+	program := p.ParseProgram()
+
+	return Eval(program, env)
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/musale/monkey/pkg/environment"
 	"github.com/musale/monkey/pkg/evaluator"
 	"github.com/musale/monkey/pkg/lexer"
 	"github.com/musale/monkey/pkg/parser"
@@ -30,6 +31,8 @@ const monkeyFace = `            __,__
 // Start will fire up a repl
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := environment.NewEnvironment()
+
 	fmt.Fprintf(out, monkeyFace)
 	for {
 		fmt.Fprintf(out, PROMPT)
@@ -51,7 +54,7 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")

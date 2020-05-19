@@ -11,6 +11,8 @@ const (
 	NullObj = "NULL"
 	// ReturnValueObj name
 	ReturnValueObj = "RETURN_VALUE"
+	// ErrorObj name
+	ErrorObj = "ERROR"
 )
 
 // Type represents every value during AST evaluation
@@ -28,7 +30,9 @@ type Integer struct {
 }
 
 // Inspect returns the integer value string format
-func (i *Integer) Inspect() string { return fmt.Sprintf("%d", i.Value) }
+func (i *Integer) Inspect() string {
+	return fmt.Sprintf("%d", i.Value)
+}
 
 // Type returns the integer object name
 func (i *Integer) Type() Type { return IntegerObj }
@@ -39,7 +43,9 @@ type Boolean struct {
 }
 
 // Inspect returns the Boolean value string format
-func (b *Boolean) Inspect() string { return fmt.Sprintf("%t", b.Value) }
+func (b *Boolean) Inspect() string {
+	return fmt.Sprintf("%t", b.Value)
+}
 
 // Type returns the Boolean object name
 func (b *Boolean) Type() Type { return BooleanObj }
@@ -59,7 +65,22 @@ type ReturnValue struct {
 }
 
 // Inspect returns the Return value string format
-func (rv *ReturnValue) Inspect() string { return rv.Value.Inspect() }
+func (rv *ReturnValue) Inspect() string {
+	return rv.Value.Inspect()
+}
 
 // Type returns the Return object name
 func (rv *ReturnValue) Type() Type { return ReturnValueObj }
+
+// Error data type
+type Error struct {
+	Message string
+}
+
+// Inspect returns the Return value string format
+func (e *Error) Inspect() string {
+	return fmt.Sprintf("%s: %s", ErrorObj, e.Message)
+}
+
+// Type returns the Return object name
+func (e *Error) Type() Type { return ErrorObj }

@@ -30,6 +30,8 @@ Before you begin, ensure you have met the following requirements:
 - Support floating point numbers.
 - Postfix operations [?].
 - Improve Syntax errors and stack errors.
+- Add support for multiline strings.
+- Report wrong string formats errors.
 
 ## Installing monkey
 
@@ -37,15 +39,15 @@ To install monkey, follow these steps:
 
 - Clone this repository and then:
 
-    `>> cd monkey`
+  `>> cd monkey`
 
 - And then build a binary
 
-    `>> go build cmd/* -o monkey`
+  `>> go build cmd/* -o monkey`
 
 - Finally run the binary
 
-    `>> ./monkey`
+  `>> ./monkey`
 
 ## Using monkey
 

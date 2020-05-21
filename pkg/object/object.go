@@ -21,6 +21,8 @@ const (
 	ErrorObj = "ERROR"
 	// FunctionObj name
 	FunctionObj = "FUNCTION"
+	//StringObj name
+	StringObj = "STRING"
 )
 
 // Type represents every value during AST evaluation
@@ -120,3 +122,14 @@ func (f *Function) Inspect() string {
 
 // Type returns the Return object name
 func (f *Function) Type() Type { return FunctionObj }
+
+// String object
+type String struct {
+	Value string
+}
+
+// Type returns the String Object name
+func (s *String) Type() Type { return StringObj }
+
+// Inspect returns the string value
+func (s *String) Inspect() string { return s.Value }

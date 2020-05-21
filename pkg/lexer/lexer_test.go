@@ -27,6 +27,7 @@ if (5 < 10) {
 10 == 10;
 10 != 9;
 #
+"foobar"
 `
 
 	tests := []struct {
@@ -107,6 +108,7 @@ if (5 < 10) {
 		{token.INT, "9"},
 		{token.SEMICOLON, ";"},
 		{token.ILLEGAL, "#"},
+		{token.STRING, "foobar"},
 		{token.EOF, ""},
 	}
 

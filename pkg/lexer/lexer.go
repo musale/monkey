@@ -1,6 +1,8 @@
 package lexer
 
-import "github.com/musale/monkey/pkg/token"
+import (
+	"github.com/musale/monkey/pkg/token"
+)
 
 // Lexer - is a character input structure that can read characters ahead of it
 type Lexer struct {
@@ -65,6 +67,10 @@ func (l *Lexer) NextToken() token.Token {
 	case '"':
 		tok.Type = token.STRING
 		tok.Literal = l.readString()
+	case '[':
+		tok = newToken(token.LBRACKET, l.ch)
+	case ']':
+		tok = newToken(token.RBRACKET, l.ch)
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()

@@ -25,6 +25,8 @@ const (
 	StringObj = "STRING"
 	//BuiltinObj name
 	BuiltinObj = "BUILTIN"
+	// ArrayObj name
+	ArrayObj = "ARRAY"
 )
 
 // BuiltinFunction defines an inbuilt function
@@ -149,3 +151,27 @@ func (b *Builtin) Type() Type { return BuiltinObj }
 
 // Inspect returns the string value
 func (b *Builtin) Inspect() string { return "builtin function" }
+
+// Array Obj
+type Array struct {
+	Elements []Object
+}
+
+// Type of array object
+func (ao *Array) Type() Type { return ArrayObj }
+
+// Inspect returns the array value
+func (ao *Array) Inspect() string {
+	var out bytes.Buffer
+
+	elements := []string{}
+	for _, e := range ao.Elements {
+		elements = append(elements, e.Inspect())
+	}
+
+	out.WriteString("[")
+	out.WriteString(strings.Join(elements, ", "))
+	out.WriteString("]")
+
+	return out.String()
+}

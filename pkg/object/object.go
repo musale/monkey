@@ -3,6 +3,7 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"strings"
 
 	"github.com/musale/monkey/pkg/ast"
@@ -27,6 +28,8 @@ const (
 	BuiltinObj = "BUILTIN"
 	// ArrayObj name
 	ArrayObj = "ARRAY"
+	// HashObj name
+	HashObj = "HASH"
 )
 
 // BuiltinFunction defines an inbuilt function
@@ -172,6 +175,75 @@ func (ao *Array) Inspect() string {
 	out.WriteString("[")
 	out.WriteString(strings.Join(elements, ", "))
 	out.WriteString("]")
+
+	return out.String()
+}
+
+// Hashable defines methods for elements that can
+// be used as HashKeys
+type Hashable interface {
+	HashKey() HashKey
+}
+
+// HashKey ...
+type HashKey struct {
+	Type  Type
+	Value uint64
+}
+
+// HashKey generator for a boolean key
+func (b *Boolean) HashKey() HashKey {
+	var value uint64
+
+	if b.Value {
+		value = 1
+	} else {
+		value = 0
+	}
+
+	return HashKey{Type: b.Type(), Value: value}
+}
+
+// HashKey generator for an integer key
+func (i *Integer) HashKey() HashKey {
+	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
+}
+
+// HashKey generator for a string key
+func (s *String) HashKey() HashKey {
+	h := fnv.New64a()
+	h.Write([]byte(s.Value))
+
+	return HashKey{Type: s.Type(), Value: h.Sum64()}
+}
+
+// HashPair is K:V
+type HashPair struct {
+	Key   Object
+	Value Object
+}
+
+// Hash ...
+type Hash struct {
+	Pairs map[HashKey]HashPair
+}
+
+// Type returns the Hash type
+func (h *Hash) Type() Type { return HashObj }
+
+// Inspect returns the Hash representation
+func (h *Hash) Inspect() string {
+	var out bytes.Buffer
+
+	pairs := []string{}
+	for _, pair := range h.Pairs {
+		pairs = append(pairs, fmt.Sprintf("%s: %s",
+			pair.Key.Inspect(), pair.Value.Inspect()))
+	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
 
 	return out.String()
 }

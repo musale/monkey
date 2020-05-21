@@ -16,10 +16,10 @@ Before you begin, ensure you have met the following requirements:
 - [x] Closures.
 - [x] Variable Bindings.
 - [x] Prefix and Infix operations.
-- [ ] Builtin Data types;
+- [x] Builtin Data types;
   - [x] Booleans.
   - [x] Strings.
-  - [ ] Hashes.
+  - [x] Hashes.
   - [x] Integers.
   - [x] Arrays.
 - Builtin functions

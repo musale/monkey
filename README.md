@@ -15,13 +15,19 @@ Before you begin, ensure you have met the following requirements:
 - [x] First class and Higher Order Functions.
 - [x] Closures.
 - [x] Variable Bindings.
-- [ ] Prefix and Infix operations.
-- [ ] Built-in Data types;
+- [x] Prefix and Infix operations.
+- [ ] Builtin Data types;
   - [x] Booleans.
-  - [ ] Strings.
+  - [x] Strings.
   - [ ] Hashes.
   - [x] Integers.
-  - [ ] Arrays.
+  - [x] Arrays.
+- Builtin functions
+  - [x] `len` for length of iterables.
+  - [x] `first` for first element in an array.
+  - [x] `last` for the last element in an array.
+  - [x] `rest` for the elements in an array except the first.
+  - [x] `push` to add a new element to the end of the array.
 
 ## Personal TODOs:
 
@@ -31,7 +37,7 @@ Before you begin, ensure you have met the following requirements:
 - Postfix operations [?].
 - Improve Syntax errors and stack errors.
 - Add support for multiline strings.
-- Report wrong string formats errors.
+- Improve string lexing i.e. check for opening and closing double quotes.
 
 ## Installing monkey
 

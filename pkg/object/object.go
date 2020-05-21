@@ -23,7 +23,12 @@ const (
 	FunctionObj = "FUNCTION"
 	//StringObj name
 	StringObj = "STRING"
+	//BuiltinObj name
+	BuiltinObj = "BUILTIN"
 )
+
+// BuiltinFunction defines an inbuilt function
+type BuiltinFunction func(args ...Object) Object
 
 // Type represents every value during AST evaluation
 type Type string
@@ -133,3 +138,14 @@ func (s *String) Type() Type { return StringObj }
 
 // Inspect returns the string value
 func (s *String) Inspect() string { return s.Value }
+
+// Builtin object
+type Builtin struct {
+	Fn BuiltinFunction
+}
+
+// Type returns the String Object name
+func (b *Builtin) Type() Type { return BuiltinObj }
+
+// Inspect returns the string value
+func (b *Builtin) Inspect() string { return "builtin function" }

@@ -45,22 +45,22 @@ To install monkey, follow these steps:
 
 - Clone this repository and then:
 
-  `>> cd monkey`
+  `$ cd monkey`
 
 - And then build a binary
 
-  `>> go build cmd/* -o monkey`
+  `$ go build cmd/* -o monkey`
 
 - Finally run the binary
 
-  `>> ./monkey`
+  `$ ./monkey`
 
 ## Using monkey
 
 To use monkey, follow these steps:
 
 ```
->> ./monkey
+$ ./monkey
 Hello mus!
             __,__
    .--.  .-"     "-.  .--.

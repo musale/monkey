@@ -97,4 +97,4 @@ If you want to contact me you can reach me at martinmshale@gmail.com.
 
 ## License
 
-This project uses the following license: [MIT](/LICENCE).
+This project uses the following license: [MIT](/LICENSE).
